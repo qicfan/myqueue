@@ -14,7 +14,6 @@
 queue_entry * qe;
 // HTTP HANDLER
 void httpd_handler(struct evhttp_request *req, void *arg) {
-  char * output;
   const char * uri;
   char * decoded_uri = NULL;
   char * action = NULL;
@@ -36,7 +35,7 @@ void httpd_handler(struct evhttp_request *req, void *arg) {
   evhttp_add_header(req->output_headers, "Connection", "close");
   struct evbuffer * buf;
   buf = evbuffer_new();
-  if (NULL == action || NULL == data) {
+  if (NULL == action) {
     // no action, put the help
     evbuffer_add_printf(buf, "params error\n");
   } else {
@@ -47,10 +46,16 @@ void httpd_handler(struct evhttp_request *req, void *arg) {
       free(q_val);
     } else {
       // set
-      queue_set(qe, data);
-      evbuffer_add_printf(buf, "insert success! queue-size:%d", qe->size);
+      if (NULL != data) {
+        queue_set(qe, data);
+        evbuffer_add_printf(buf, "insert success! queue-size:%d", qe->size);
+      } else {
+        evbuffer_add_printf(buf, "no data into queue! queue-size:%d", qe->size);
+      }
     }
   }
+  free(action);
+  free(data);
   evhttp_send_reply(req, HTTP_OK, "OK", buf);
   evbuffer_free(buf);
 }
