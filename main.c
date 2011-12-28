@@ -14,21 +14,11 @@
 queue_entry * qe;
 // HTTP HANDLER
 void httpd_handler(struct evhttp_request *req, void *arg) {
-  const char * uri;
-  char * decoded_uri = NULL;
-  char * action = NULL;
-  char * data = NULL;
-  uri = evhttp_request_uri(req);
-  decoded_uri = evhttp_decode_uri(uri);
   struct evkeyvalq params;
-  evhttp_parse_query(decoded_uri, &params);
+  evhttp_parse_query(evhttp_decode_uri(req->uri), &params);
   // 取得操作
-  action = evhttp_find_header(&params, "act");
-  data = evhttp_find_header(&params, "data");
-  free(decoded_uri);
-  if (NULL == data) {
-    data = (char *) EVBUFFER_DATA(req->input_buffer);
-  }
+  const char * action = evhttp_find_header(&params, "act");
+  const char * data = evhttp_find_header(&params, "data");
   // HTTP HEADER
   evhttp_add_header(req->output_headers, "Server", MYHTTPD_SIGNATURE);
   evhttp_add_header(req->output_headers, "Content-type", "text/html");
@@ -54,9 +44,8 @@ void httpd_handler(struct evhttp_request *req, void *arg) {
       }
     }
   }
-  free(action);
-  free(data);
   evhttp_send_reply(req, HTTP_OK, "OK", buf);
+  evhttp_clear_headers(&params);
   evbuffer_free(buf);
 }
 
