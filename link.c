@@ -29,7 +29,12 @@ char * queue_get(struct queue_entry * qe) {
 	queue * q = qe->head;
     char * return_value = q->value;
     qe->head = q->next;
+    if (NULL == qe->head && qe->head == qe->foot) {
+      qe->foot = NULL;
+    }
     qe->size --;
     free(q);
+    printf("free(q) %s\n", q);
+    q = NULL;
     return return_value;
 }

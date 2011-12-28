@@ -33,7 +33,9 @@ void httpd_handler(struct evhttp_request *req, void *arg) {
       // get
       char * q_val = queue_get(qe);
       evbuffer_add_printf(buf, "%s", q_val);
-      free(q_val);
+      if (NULL != q_val) {
+        free(q_val);
+      }
     } else {
       // set
       if (NULL != data) {
@@ -50,8 +52,7 @@ void httpd_handler(struct evhttp_request *req, void *arg) {
 }
 
 void show_help() {
-  char * help = "written by zeroq (http://zeroq.me)\n-l <ip_addr> interface to listen on, default is 0.0.0.0\n-p <num> port number to listen on, default is 1985\n-d run as a daemon\n-h print this help and exit\n\n";
-  fprintf(stderr, help);
+  printf("written by zeroq (http://zeroq.me)\n-l <ip_addr> interface to listen on, default is 0.0.0.0\n-p <num> port number to listen on, default is 1985\n-d run as a daemon\n-h print this help and exit\n\n");
 }
 
 void signal_handler(int sig) {
@@ -124,6 +125,17 @@ int main(int argc, char * argv[]) {
   evhttp_set_gencb(httpd, httpd_handler, NULL);
   event_dispatch();
   evhttp_free(httpd);
-  evhttp_free(httpd);
+  if (NULL != qe->head) {
+    free(qe->head->value);
+    free(qe->head);
+    qe->head = NULL;
+  }
+  if (NULL != qe->foot) {
+    free(qe->foot->value);
+    free(qe->foot);
+    qe->foot = NULL;
+  }
+  free(qe);
+
   return 0;
 }

@@ -16,6 +16,4 @@ typedef struct queue_entry {
 int queue_set(queue_entry * qe, const char * string);
 // get data from queue
 char * queue_get(queue_entry * qe);
-// update queue entry
-int queue_entry_update(queue_entry * qe);
 #endif
