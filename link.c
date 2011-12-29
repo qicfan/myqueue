@@ -33,8 +33,10 @@ char * queue_get(struct queue_entry * qe) {
       qe->foot = NULL;
     }
     qe->size --;
-    free(q);
-    printf("free(q) %s\n", q);
-    q = NULL;
+    if (NULL != q) {
+      free(q);
+      printf("free(q) %p \n", q);
+      q = NULL;
+    }
     return return_value;
 }

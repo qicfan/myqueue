@@ -12,6 +12,7 @@
 #define QUEUE_LIST_GET "get"
 #define QUEUE_LIST_SET "set"
 queue_entry * qe;
+
 // HTTP HANDLER
 void httpd_handler(struct evhttp_request *req, void *arg) {
   struct evkeyvalq params;
@@ -35,6 +36,8 @@ void httpd_handler(struct evhttp_request *req, void *arg) {
       evbuffer_add_printf(buf, "%s", q_val);
       if (NULL != q_val) {
         free(q_val);
+        printf("free(q_val) %p\n", q_val);
+        q_val = NULL;
       }
     } else {
       // set
