@@ -14,9 +14,9 @@ int queue_set(struct queue_entry * qe, const char * string) {
 	if (qe->head == NULL) {
 		qe->head = q;
 	}
-    if (qe->foot != NULL) {
-      qe->foot->next = q;
-    }
+	if (qe->foot != NULL) {
+		qe->foot->next = q;
+	}
 	qe->foot = q;
 	qe->size ++;
 	return 0;
@@ -24,19 +24,19 @@ int queue_set(struct queue_entry * qe, const char * string) {
 
 char * queue_get(struct queue_entry * qe) {
 	if (qe->head == NULL) {
-      return NULL;
-    }
+		return NULL;
+	}
 	queue * q = qe->head;
-    char * return_value = q->value;
-    qe->head = q->next;
-    if (NULL == qe->head && qe->head == qe->foot) {
-      qe->foot = NULL;
-    }
-    qe->size --;
-    if (NULL != q) {
-      free(q);
-      printf("free(q) %p \n", q);
-      q = NULL;
-    }
-    return return_value;
+	char * return_value = q->value;
+	qe->head = q->next;
+	if (NULL == qe->head && qe->head == qe->foot) {
+		qe->foot = NULL;
+	}
+	qe->size --;
+	if (NULL != q) {
+		free(q);
+		printf("free(q) %p \n", q);
+		q = NULL;
+	}
+	return return_value;
 }
